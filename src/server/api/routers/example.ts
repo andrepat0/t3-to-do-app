@@ -14,13 +14,18 @@ export const exampleRouter = createTRPCRouter({
     return ctx.prisma.example.findMany();
   }),
   test: publicProcedure.query( async ({ ctx }) => {
-    const values = await ctx.prisma.test.findMany();
+    return await ctx.prisma.test.findMany();
 
-    return values.map(el => el.name)
+    //return values.map(el => el.name)
   }),
   createTest: publicProcedure
   .input(z.string())
   .mutation( async ({ ctx,input }) => {
     return await ctx.prisma.test.create({data: { name: input}})
+  }),
+  removeTest: publicProcedure
+  .input(z.string())
+  .mutation( async ({ ctx,input }) => {
+    return await ctx.prisma.test.delete({ where: { id: input }})
   })
 });
