@@ -13,23 +13,30 @@ const ApiContextProvider: React.FC<Props> = ({children}) => {
 
     const ctx = api.useContext();
 
-    const { data: listItems, isLoading: isLoadingList } = api.example.test.useQuery();
+    const { data: listItems, isLoading: isLoadingList } = api.example.getList.useQuery();
     const { mutate: addItemTodo, isLoading: isLoadingCreation } =
-      api.example.createTest.useMutation({
+      api.example.createTodo.useMutation({
         onSuccess: async () => {
           await ctx.example.invalidate();
         },
       });
 
       const { mutate: removeItem, isLoading: isLoadingDelete } =
-      api.example.removeTest.useMutation({
+      api.example.removeTodo.useMutation({
+        onSuccess: async () => {
+          await ctx.example.invalidate();
+        },
+      });
+
+      const { mutate: editItem, isLoading: isLoadingEdit } =
+      api.example.editTodo.useMutation({
         onSuccess: async () => {
           await ctx.example.invalidate();
         },
       });
 
     return (
-        <ApiContext.Provider value={{addItemTodo: addItemTodo, isLoadingCreation: isLoadingCreation, removeItem: removeItem, isLoadingDelete: isLoadingDelete, listItems: listItems,isLoadingList:isLoadingList}}>
+        <ApiContext.Provider value={{addItemTodo: addItemTodo, editItem: editItem, isLoadingEdit: isLoadingEdit, isLoadingCreation: isLoadingCreation, removeItem: removeItem, isLoadingDelete: isLoadingDelete, listItems: listItems,isLoadingList:isLoadingList}}>
             {children}
         </ApiContext.Provider>
     )

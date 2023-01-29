@@ -3,29 +3,31 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const exampleRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.example.findMany();
+  getList: publicProcedure.query( async ({ ctx }) => {
+    const list = await ctx.prisma.test.findMany();
+   return list.reverse();
   }),
-  test: publicProcedure.query( async ({ ctx }) => {
-    return await ctx.prisma.test.findMany();
-
-    //return values.map(el => el.name)
-  }),
-  createTest: publicProcedure
+  createTodo: publicProcedure
   .input(z.string())
   .mutation( async ({ ctx,input }) => {
     return await ctx.prisma.test.create({data: { name: input}})
   }),
-  removeTest: publicProcedure
+  removeTodo: publicProcedure
   .input(z.string())
   .mutation( async ({ ctx,input }) => {
     return await ctx.prisma.test.delete({ where: { id: input }})
+  }),
+  editTodo: publicProcedure
+  .input(z.object({name: z.string(),id: z.string()}))
+  .mutation( async ({ ctx,input }) => {
+
+    const toDoItem = {
+      id: input.id,
+      name: input.name
+    };
+
+    console.log(toDoItem);
+
+    return await ctx.prisma.test.update({ where: { id: input.id}, data: {name: ""}})
   })
 });
