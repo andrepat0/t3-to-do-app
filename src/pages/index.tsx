@@ -1,55 +1,11 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { MouseEventHandler, useState } from "react";
-import {IoIosRemove, IoMdRemoveCircleOutline} from "react-icons/io";
+import ButtonAddTodo from "../components/ButtonAddTodo";
+import ListItems from "../components/ListItems/ListItems";
 
-
-import { api } from "../utils/api";
+import ApiContextProvider from "../context/ApiContext";
 
 const Home: NextPage = () => {
-  const {data: test, isLoading} = api.example.test.useQuery();
-
-  console.log(test);
-
-
-  const ButtonAddTodo = () => {
-    const ctx = api.useContext();
-    const {mutate} = api.example.createTest.useMutation({onSuccess: async () => {
-       await ctx.example.invalidate();
-  }})
-  const [toDoName, setToDoName] = useState("");
-
-    function handleAddTodo(){
-      if(toDoName){
-        mutate(toDoName)
-      }
-    }
-
-    return (
-      <div className="flex flex-row gap-2 mb-4 min-w-[22rem] ">
-        <input type="text" className="rounded-lg w-full" onChange={(e) => setToDoName(e.target.value)} />
-        <button className="text-white font-bold hover:text-[#2e026d] hover:bg-white rounded-lg p-2 border-2 border-white mr-2" onClick={handleAddTodo}>ADD</button>
-      </div>
-    )
-  };
-
-  const ListItems = () => {
-
-    const ctx = api.useContext();
-    const {mutate} = api.example.removeTest.useMutation({onSuccess: async () => {
-       await ctx.example.invalidate();
-  }})
-
-    function handleRemoveToDo(el: string){
-        mutate(el)
-    }
-
-    return (
-      <ul className="gap-2 p-4 flex flex-col w-full max-w-sm max-h-64 overflow-auto">
-            {isLoading ? [Array(10)].map((el,i) => <li key={i} className="w-full h-4 animate-pulse bg-slate-400" />) : test?.map((el,i) => <li key={i} className="text-lg ease-in-out group flex flex-row justify-between border-2 transform translate hover:translate-x-2 duration-200 hover:shadow-white border-white p-2 text-white rounded-lg break-all">{el.name}<IoIosRemove className="w-6 h-6 group-hover:hidden cursor-pointer text-red-500 min-w-6" /><IoMdRemoveCircleOutline onClick={() => handleRemoveToDo(el.id)} className="w-6 h-6 min-w-6 hidden group-hover:flex cursor-pointer text-red-600 hover:scale-110" /></li>)} 
-          </ul>
-    )
-  }
 
   return (
     <>
@@ -59,14 +15,16 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <div className="container flex flex-row justify-evenly items-center gap-12 px-4 py-16 ">
+        <div className="container flex flex-row items-center justify-evenly gap-12 px-4 py-16 ">
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
             To Do App
           </h1>
-          <div className="flex flex-col items-center justify-between ">
-          <ButtonAddTodo />
-          <ListItems />
-          </div>
+          <ApiContextProvider>
+            <div className="flex flex-col items-center justify-between ">
+              <ButtonAddTodo/>
+              <ListItems />
+            </div>
+          </ApiContextProvider>
         </div>
       </main>
     </>
