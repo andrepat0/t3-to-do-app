@@ -20,14 +20,6 @@ export const exampleRouter = createTRPCRouter({
   editTodo: publicProcedure
   .input(z.object({name: z.string(),id: z.string()}))
   .mutation( async ({ ctx,input }) => {
-
-    const toDoItem = {
-      id: input.id,
-      name: input.name
-    };
-
-    console.log(toDoItem);
-
-    return await ctx.prisma.test.update({ where: { id: input.id}, data: {name: ""}})
+    return await ctx.prisma.test.update({ where: { id: input.id}, data: {name: input.name}})
   })
 });
